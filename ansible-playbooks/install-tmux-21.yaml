@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  connection: local
+  remote_user: libvirtd
+  name: "Installs tmux 2.1 from source"
+  roles:
+    - role: setup-tmux-21 

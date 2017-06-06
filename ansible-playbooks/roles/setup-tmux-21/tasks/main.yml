@@ -1,0 +1,33 @@
+---
+- name: "Test"
+  command: which tmux
+  register: check
+  ignore_errors: yes
+
+- name: "Download tmux"
+  command: wget -v https://github.com/tmux/tmux/releases/download/2.1/tmux-2.1.tar.gz -O {{ dir }}/tmux.tar.gz
+  when: check.rc != 0
+
+- name: "Extract files"
+  shell: tar -xvzf {{ dir }}/tmux.tar.gz -C {{ dir }}
+
+- name: "Install dependencies"
+  become: "yes"
+  become_user: root
+  command: apt-get install -y libevent-dev libncurses-dev autotools-dev automake
+
+- name: "pwd and change dir"
+  shell: cd {{ dir }}/tmux-2.1 && pwd
+
+- name: "configure and make"
+  shell: ./configure && make
+  args:
+      chdir: "{{ dir }}/tmux-2.1"
+
+- name:
+  become: yes
+  become_user: "root"
+  shell: make install
+  args:
+      chdir: "{{ dir }}/tmux-2.1"
+ 
